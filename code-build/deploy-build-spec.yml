@@ -3,4 +3,6 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "deploy"
+      - cd existingLambda
+      - zip -r function.zip .
+      - aws lambda update-function-code --function-name terraform-import-lambda --zip-file fileb://function.zip
