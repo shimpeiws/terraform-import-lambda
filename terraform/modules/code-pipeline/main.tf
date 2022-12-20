@@ -172,7 +172,7 @@ data "aws_kms_alias" "s3kmskey" {
 }
 
 resource "aws_codepipeline" "build_deploy" {
-  name     = "codepipeline-with-approval"
+  name     = "${var.code_pipeline_project_name}-pipeline"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
