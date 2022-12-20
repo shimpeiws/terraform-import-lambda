@@ -1,0 +1,5 @@
+phases:
+  build:
+    commands:
+      - terraform init
+      - terraform apply -target=module.lambda.aws_lambda_function.terraform_import_lambda -auto-approve
