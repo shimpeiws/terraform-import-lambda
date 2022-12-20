@@ -34,11 +34,16 @@ variable "github_branch_name" {
 }
 
 variable "build_buildspec_path" {
-  description = "Path for build spec that is used for terraform plan"
+  description = "Path for build spec that is used for build"
   type        = string
 }
 
 variable "deploy_buildspec_path" {
+  description = "Path for build spec that is used for deploy"
+  type        = string
+}
+
+variable "terraform_apply_buildspec_path" {
   description = "Path for build spec that is used for terraform apply"
   type        = string
 }

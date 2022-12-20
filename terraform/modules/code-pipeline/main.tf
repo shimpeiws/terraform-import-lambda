@@ -109,6 +109,36 @@ resource "aws_codebuild_project" "deploy" {
   }
 }
 
+resource "aws_codebuild_project" "terraform_apply" {
+  name          = "${var.code_build_project_name}-terraform-apply"
+  description   = "code build for terraform apply"
+  build_timeout = "60"
+  service_role  = aws_iam_role.code_build_role.arn
+
+  artifacts {
+    type = "NO_ARTIFACTS"
+  }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "hashicorp/terraform:1.3.5"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = true
+  }
+
+  source {
+    type            = "GITHUB"
+    location        = var.github_project_url
+    git_clone_depth = 1
+    buildspec       = var.terraform_apply_buildspec_path
+    auth {
+      type     = "OAUTH"
+      resource = aws_codebuild_source_credential.github.arn
+    }
+  }
+}
+
 data "aws_iam_policy_document" "codepipeline_assume_role" {
   statement {
     effect  = "Allow"
@@ -236,6 +266,23 @@ resource "aws_codepipeline" "build_deploy" {
   }
 
   stage {
+    name = "Deploy"
+
+    action {
+      name            = "Deploy"
+      category        = "Build"
+      owner           = "AWS"
+      provider        = "CodeBuild"
+      input_artifacts = ["source_output"]
+      version         = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.deploy.name
+      }
+    }
+  }
+
+  stage {
     name = "Apply"
 
     action {
@@ -247,7 +294,7 @@ resource "aws_codepipeline" "build_deploy" {
       version         = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.deploy.name
+        ProjectName = aws_codebuild_project.terraform_apply.name
       }
     }
   }
