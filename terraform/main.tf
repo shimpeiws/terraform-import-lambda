@@ -27,5 +27,5 @@ module "code-pipeline" {
   github_branch_name             = "main"
   build_buildspec_path           = "./code-build/build-build-spec.yml"
   deploy_buildspec_path          = "./code-build/deploy-build-spec.yml"
-  terraform_apply_buildspec_path = "./code-build/terraform-appoy-build-spec.yml"
+  terraform_apply_buildspec_path = "./code-build/terraform-appy-build-spec.yml"
 }
